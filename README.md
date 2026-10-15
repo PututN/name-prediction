@@ -86,6 +86,8 @@ Konfigurasi non-rahasia (path cache ke `/tmp`, session cookie, log ke stderr, ko
    ```bash
    php artisan migrate --seed --force
    ```
+   Jika jaringan lokal memblokir port 5432, gunakan port `6543` (Transaction pooler) khusus untuk langkah ini.
+   Setelah itu aktifkan Row Level Security di semua tabel `public` (tanpa policy) agar tidak bisa diakses lewat API Supabase. Laravel terhubung sebagai pemilik tabel sehingga tidak terpengaruh.
 3. **Vercel**: import repository ini, lalu isi Environment Variables:
    ```dotenv
    APP_KEY=        # hasil: php artisan key:generate --show

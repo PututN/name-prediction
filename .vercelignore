@@ -3,3 +3,5 @@
 /storage/logs/*.log
 /.claude
 .env
+.env.supabase
+.env.vercel
