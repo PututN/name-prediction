@@ -76,6 +76,30 @@ Jalankan aplikasi, lalu buka http://localhost:8000:
 php artisan serve
 ```
 
+## Deploy (Vercel + Supabase)
+
+Aplikasi berjalan sebagai serverless function di Vercel lewat runtime komunitas [`vercel-php`](https://github.com/vercel-community/php), dengan database PostgreSQL dari Supabase.
+Konfigurasi non-rahasia (path cache ke `/tmp`, session cookie, log ke stderr, koneksi `pgsql`) sudah ada di `vercel.json`.
+
+1. **Supabase**: buat project baru, matikan opsi *Data API* agar tabel tidak terbuka lewat REST API publik. Lalu buka **Connect → Session pooler** dan catat host, port, user, dan database.
+2. **Migration**: dari komputer lokal, isi `.env` sementara dengan kredensial Supabase (`DB_CONNECTION=pgsql`) lalu jalankan:
+   ```bash
+   php artisan migrate --seed --force
+   ```
+3. **Vercel**: import repository ini, lalu isi Environment Variables:
+   ```dotenv
+   APP_KEY=        # hasil: php artisan key:generate --show
+   APP_URL=        # contoh: https://name-prediction.vercel.app
+   DB_HOST=        # host Session pooler, contoh: aws-0-ap-southeast-1.pooler.supabase.com
+   DB_PORT=5432
+   DB_DATABASE=postgres
+   DB_USERNAME=    # contoh: postgres.abcdefghijklmnop
+   DB_PASSWORD=
+   ```
+4. Deploy. Setiap push ke `main` akan otomatis di-deploy ulang.
+
+Gunakan host *Session pooler*, bukan host direct `db.<ref>.supabase.co`, karena host direct hanya mendukung IPv6.
+
 ## Testing
 
 Test memakai SQLite in-memory dan response API palsu (`Http::fake`), jadi tidak butuh MySQL maupun kuota API:
